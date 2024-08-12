@@ -5,6 +5,10 @@ export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  const goCad = () => {
+    navigation.replace('Cadastro');
+  };
+
   const handleLogin = () => {
     if (email == 'teste' && password == '123') {
       navigation.replace('Home');
@@ -33,6 +37,7 @@ export default function LoginScreen({ navigation }) {
         secureTextEntry
       />
       <Button style={styles.button} title="Login" onPress={handleLogin} />
+      <Button style={styles.button2} title="Sign in" onPress={goCad} />
     </View>
   );
 }
@@ -60,5 +65,9 @@ const styles = StyleSheet.create({
   },
   button: {
     borderRadius: 10,
+  },
+  button2: {
+    borderRadius: 10,
+    margin: 20
   },
 });
