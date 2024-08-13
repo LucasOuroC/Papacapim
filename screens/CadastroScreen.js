@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Image } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 export default function RegisterScreen({ navigation }) {
   const [name, setName] = useState('');
@@ -27,7 +28,11 @@ export default function RegisterScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.central}>
-        <Button onPress={backhome}/>
+        <TouchableOpacity style={styles.buttonBack} onPress={backhome}>
+          <Text>
+            Voltar
+          </Text>
+        </TouchableOpacity>
         <Image 
           source = {require('../assets/icone.png')} 
           style={styles.img}
@@ -63,9 +68,11 @@ export default function RegisterScreen({ navigation }) {
           secureTextEntry
         />
       </View>
-      <View >
-        <Button style={styles.button}  title="Cadastrar" onPress={handleRegister} />
-      </View>
+      <TouchableOpacity style={styles.button} onPress={handleRegister}>
+        <Text>
+          Cadastrar
+        </Text>
+      </TouchableOpacity>
       
     </View>
   );
@@ -92,7 +99,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   button: {
-    borderRadius: 30,
+    backgroundColor: '#007BFF',
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 10,
+    alignItems: 'center',
+  },
+  buttonBack: {
+    backgroundColor: '#007BFF',
+    borderRadius: 10,
+    padding: 5,
+    width: 80,
+    marginBottom: 10,
+    alignItems: 'center',
   },
   central: {
     padding: 10,

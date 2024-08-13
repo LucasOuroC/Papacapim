@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -10,17 +10,20 @@ export default function LoginScreen({ navigation }) {
   };
 
   const handleLogin = () => {
-    if (email == 'teste' && password == '123') {
+    if (email === 'teste' && password === '123') {
       navigation.replace('Home');
-    } else{
+    } else {
       navigation.replace('Login');
     }
-    
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
+      <Image 
+          source = {require('../assets/icone.png')} 
+          style={styles.img}
+        />
+      <Text style={styles.title}>Papacapim</Text>
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -36,8 +39,12 @@ export default function LoginScreen({ navigation }) {
         onChangeText={setPassword}
         secureTextEntry
       />
-      <Button style={styles.button} title="Login" onPress={handleLogin} />
-      <Button style={styles.button2} title="Sign in" onPress={goCad} />
+      <TouchableOpacity style={styles.button} onPress={handleLogin}>
+        <Text style={styles.buttonText}>Login</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button2} onPress={goCad}>
+        <Text style={styles.buttonText}>Sign in</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -51,9 +58,8 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    marginBottom: 16,
-    textAlign: 'center',
     marginBottom: 20,
+    textAlign: 'center',
   },
   input: {
     height: 40,
@@ -64,10 +70,26 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   button: {
+    backgroundColor: '#007BFF',
     borderRadius: 10,
+    padding: 10,
+    marginBottom: 10,
+    alignItems: 'center',
   },
   button2: {
+    backgroundColor: '#28A745',
     borderRadius: 10,
-    margin: 20
+    padding: 10,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#FFF',
+    fontSize: 16,
+  },
+  img: {
+    width: 130,
+    height: 180,
+    alignSelf: 'center',
+    marginBottom: 20,
   },
 });
