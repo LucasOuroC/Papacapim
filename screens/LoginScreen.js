@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Image, Alert } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import * as Animatable from "react-native-animatable";
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -10,17 +12,22 @@ export default function LoginScreen({ navigation }) {
   };
 
   const handleLogin = () => {
-    if (email == 'teste' && password == '123') {
+    if (email === '' && password === '') {
       navigation.replace('Home');
-    } else{
-      navigation.replace('Login');
+    } else {
+      Alert.alert('Login Failed', 'Invalid email or password. Please try again.');
     }
-    
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
+      <Animatable.Image 
+        resizeMode='contain'
+        animation="flipInY"
+        style={styles.img}
+        source={require('../assets/icone.png')}
+      />
+      <Text style={styles.title}>Papacapim</Text>
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -36,8 +43,12 @@ export default function LoginScreen({ navigation }) {
         onChangeText={setPassword}
         secureTextEntry
       />
-      <Button style={styles.button} title="Login" onPress={handleLogin} />
-      <Button style={styles.button2} title="Sign in" onPress={goCad} />
+      <TouchableOpacity style={styles.button} onPress={handleLogin}>
+        <Text style={styles.textb1}>Login</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button2} onPress={goCad}>
+        <Text style={styles.textb2}>Sign in</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -50,14 +61,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   title: {
-    fontSize: 24,
+    fontSize: 30,
     marginBottom: 16,
     textAlign: 'center',
-    marginBottom: 20,
+    fontWeight: 'bold',
   },
   input: {
-    height: 40,
-    borderColor: '#000000',
+    height: 50,
+    borderColor: '#eee',
     borderWidth: 1,
     borderRadius: 10,
     marginBottom: 15,
@@ -65,9 +76,40 @@ const styles = StyleSheet.create({
   },
   button: {
     borderRadius: 10,
+    backgroundColor: '#0033A0',   
+    paddingVertical: 15,
+    paddingHorizontal: 25,
+    marginVertical: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3,
+  },
+  textb1: {
+    color: '#ffffff',
+    fontSize: 17,
   },
   button2: {
     borderRadius: 10,
-    margin: 20
+    paddingVertical: 15,
+    paddingHorizontal: 25,
+    marginVertical: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#eee',
+  },
+  textb2: {
+    color: '#000000',
+    fontSize: 17,
+  },
+  img: {
+    width: 100,
+    height: 100,
+    alignSelf: 'center',
+    marginBottom: 20,
   },
 });

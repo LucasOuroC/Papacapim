@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Image } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Image } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import * as Animatable from "react-native-animatable";
 
 export default function RegisterScreen({ navigation }) {
   const [name, setName] = useState('');
@@ -27,11 +29,17 @@ export default function RegisterScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.central}>
-        <Button onPress={backhome}/>
-        <Image 
-          source = {require('../assets/icone.png')} 
-          style={styles.img}
-        />
+        <TouchableOpacity style={styles.buttonBack} onPress={backhome}>
+          <Text style={styles.textbBack}> 
+            Back
+          </Text>
+        </TouchableOpacity>
+        <Animatable.Image 
+        resizeMode='contain'
+        animation="flipInY"
+        style={styles.img}
+        source={require('../assets/icone.png')}
+      />
         <Text style={styles.title}>Cadastro Usuario</Text>
         <TextInput
           style={styles.input}
@@ -63,9 +71,11 @@ export default function RegisterScreen({ navigation }) {
           secureTextEntry
         />
       </View>
-      <View >
-        <Button style={styles.button}  title="Cadastrar" onPress={handleRegister} />
-      </View>
+      <TouchableOpacity style={styles.button1} onPress={handleRegister}> 
+        <Text style={styles.textb1}>
+          Cadastrar
+        </Text>
+      </TouchableOpacity>
       
     </View>
   );
@@ -91,8 +101,35 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     paddingHorizontal: 8,
   },
-  button: {
-    borderRadius: 30,
+  buttonBack: {
+    borderRadius: 10,
+    paddingVertical: 5,
+    paddingHorizontal: 25,
+    marginHorizontal: 5,
+    width: 90,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#eee',
+  },
+  textbBack: {
+    color: '#000000',
+    fontSize: 17,
+  },
+  button1: {
+    borderRadius: 10,
+    backgroundColor: '#0033A0',   
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    margin: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    elevation: 3,
+  },
+  textb1: {
+    color: '#ffffff',
+    fontSize: 17,
   },
   central: {
     padding: 10,
@@ -103,5 +140,6 @@ const styles = StyleSheet.create({
     height: 180,
     alignSelf: 'center',
     marginBottom: 20,
+    marginTop: 30,
   },
 });
