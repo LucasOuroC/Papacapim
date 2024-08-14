@@ -1,6 +1,6 @@
 PT-BR Version
 
-Esse repositorio tem como principal objetivo ser um ponto de start para um novo projeto expo.
+Projeto espelho do antigo twitter.
 
 Para utilização, sera necessario:
 -Versão mais recente do Node.js
@@ -14,7 +14,7 @@ Em terminal execute:
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
 En Version
-This repository's main objective is to be a starting point for a new expo project.
+Twitter brazilian way.
 
 To use, you will need:
 -Latest version of Node.js
