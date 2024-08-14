@@ -4,27 +4,19 @@ import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+// Dados de exemplo para os posts
 const posts = [
-  {
-    id: '1',
-    user: 'User1',
-    content: 'This is a sample tweet. #reactnative',
-    time: '2h ago',
-    image: 'https://via.placeholder.com/150' 
-  },
-  {
-    id: '2',
-    user: 'User2',
-    content: 'Another example tweet to show the layout.',
-    time: '5h ago',
-    image: 'https://via.placeholder.com/150'
-  },
+  { id: '1', user: 'User1', content: 'This is a sample tweet. #reactnative', time: '2h ago', image: 'https://via.placeholder.com/150' },
+  { id: '2', user: 'User2', content: 'Another example tweet to show the layout.', time: '5h ago', image: 'https://via.placeholder.com/150' },
+  { id: '3', user: 'User3', content: 'Another example tweet to show the layout.', time: '5h ago', image: 'https://via.placeholder.com/150' },
+  { id: '4', user: 'User4', content: 'Another example tweet to show the layout.', time: '5h ago', image: 'https://via.placeholder.com/150' },
+  { id: '5', user: 'User5', content: 'Another example tweet to show the layout.', time: '5h ago', image: 'https://via.placeholder.com/150' },
 ];
 
-const HomeScreen = () => {
-  const navigation = useNavigation(); 
-  const { top, bottom } = useSafeAreaInsets(); 
+const HomeScreen = ({ navigation }) => {
+  const { top, bottom } = useSafeAreaInsets(); // Pegando os insets para adicionar padding
 
+  // Função para renderizar cada item do FlatList
   const renderPost = ({ item }) => (
     <View style={styles.postContainer}>
       <Image source={{ uri: item.image }} style={styles.postImage} />
@@ -36,21 +28,17 @@ const HomeScreen = () => {
     </View>
   );
 
+  // onpress com função que abre a aba lateral do codigo. 
   return (
     <SafeAreaView style={[styles.container, { paddingTop: top, paddingBottom: bottom }]}>
       <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => navigation.toggleDrawer()} // Abre o menu lateral
-        >
-          <Image
-            source={require('../assets/icon.png')} 
-            style={styles.profileImage}
-          />
+        <TouchableOpacity onPress={() => navigation.toggleDrawer()}>
+          <Image source={require('../assets/Lucas Perfil.jpg')} style={styles.profileImage} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Home</Text>
+        <Text style={styles.headerTitle}>Perfil</Text>
         <TouchableOpacity
           style={styles.backButton}
-          onPress={() => navigation.navigate('Login')} 
+          onPress={() => navigation.navigate('Login')}
         >
           <FontAwesome name="arrow-left" size={24} color="#ffffff" />
         </TouchableOpacity>
@@ -62,18 +50,19 @@ const HomeScreen = () => {
       />
       <TouchableOpacity
         style={styles.floatingButton}
-        onPress={() => navigation.navigate('Postagens')} // Navega para a tela de postagens
+        onPress={() => navigation.navigate('Postagens')}
       >
-        <FontAwesome name="plus" size={24} color="#ffffff" />
+        <FontAwesome name="plus" size={24} color="#ffffff"/>
       </TouchableOpacity>
     </SafeAreaView>
   );
 };
 
+// Definições de estilo
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212', // Cor de fundo escura
+    backgroundColor: '#121212', 
   },
   header: {
     flexDirection: 'row',
@@ -82,7 +71,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderBottomWidth: 1,
     borderBottomColor: '#333',
-    justifyContent: 'space-between', // Adiciona espaço entre os itens
+    justifyContent: 'space-between',
   },
   headerTitle: {
     color: '#ffffff',
@@ -134,18 +123,10 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     alignItems: 'center',
     justifyContent: 'center',
-    elevation: 5, 
+    elevation: 5,
   },
   backButton: {
     padding: 10,
-  },
-  buttonBack: {
-    backgroundColor: '#007BFF',
-    borderRadius: 10,
-    padding: 5,
-    width: 80,
-    marginBottom: 10,
-    alignItems: 'center',
   },
 });
 
