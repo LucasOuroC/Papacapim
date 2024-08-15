@@ -1,48 +1,94 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
 
-const PostagensScreen = () => {
-const navigation = useNavigation();
+const PostScreen = ({ navigation, route }) => {
+  const [postContent, setPostContent] = useState('');
 
-  const backhome = () => {
-    navigation.replace('Home')
-  }
+  const handlePost = () => {
+    if (postContent.trim() !== '') {
+      // Adicionando o novo post à lista de posts na Home
+      const newPost = {
+        id: Math.random().toString(),
+        user: 'Novo Usuario',  // Pode ser substituído pelo nome do usuário real
+        content: postContent,
+        time: 'Agora',
+        image: 'https://via.placeholder.com/150',  // Pode ser substituído por uma imagem real
+      };
+
+      // Passando o novo post para a Home
+      route.params.addPost(newPost);
+
+      // Retornando para a Home
+      navigation.goBack();
+    }
+  };
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity style={styles.buttonBack} onPress={backhome}>
-          <Text style={styles.textbBack}> 
-            Back
-          </Text>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <FontAwesome name="arrow-left" size={24} color="#ffffff" />
         </TouchableOpacity>
-      <Text>Postagens Screen</Text>
-    </View>
+        <Text style={styles.headerTitle}>Novo Post</Text>
+      </View>
+      <TextInput
+        style={styles.input}
+        placeholder="O que você está pensando?"
+        placeholderTextColor="#aaaaaa"
+        multiline
+        value={postContent}
+        onChangeText={setPostContent}
+      />
+      <TouchableOpacity style={styles.button} onPress={handlePost}>
+        <Text style={styles.buttonText}>Postar</Text>
+      </TouchableOpacity>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#121212', // Fundo escuro para o tema
+    backgroundColor: '#121212',
+    padding: 20,
   },
-  buttonBack: {
-    borderRadius: 10,
-    paddingVertical: 5,
-    paddingHorizontal: 25,
-    marginHorizontal: 5,
-    width: 90,
+  header: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: '#eee',
+    backgroundColor: '#1E1E1E',
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#333',
   },
-  textbBack: {
-    color: '#000000',
-    fontSize: 17,
+  headerTitle: {
+    color: '#ffffff',
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginLeft: 15,
+  },
+  input: {
+    flex: 1,
+    backgroundColor: '#1E1E1E',
+    color: '#ffffff',
+    fontSize: 16,
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 20,
+    textAlignVertical: 'top',
+  },
+  button: {
+    backgroundColor: '#1DA1F2',
+    padding: 15,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  buttonText: {
+    color: '#ffffff',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 
-export default PostagensScreen;
+export default PostScreen;
