@@ -25,4 +25,6 @@ To use, you will need:
 In terminal run:
 "npm install -g expo-cli" --To install expo CLI on your computer
 
+"npm install react-native-animatable --save"
+
 "expo start" --To run the application (Devices must be on the same network)
