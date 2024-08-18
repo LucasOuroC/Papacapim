@@ -10,6 +10,8 @@ Em terminal execute:
 
 "npm install -g expo-cli" --Para a instalação do expo CLI em seu computador
 
+"npm install react-native-animatable --save"
+
 "expo start" --Para execução do aplicativo(Necessario os dispositivos estarem em mesma rede)
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
