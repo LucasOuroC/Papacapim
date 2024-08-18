@@ -1,34 +1,55 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image, SafeAreaView } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons'; 
-import { useNavigation } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
-// Dados de exemplo para os posts
-const posts = [
-  { id: '1', user: 'User1', content: 'This is a sample tweet. #reactnative', time: '2h ago', image: 'https://via.placeholder.com/150' },
-  { id: '2', user: 'User2', content: 'Another example tweet to show the layout.', time: '5h ago', image: 'https://via.placeholder.com/150' },
-  { id: '3', user: 'User3', content: 'Another example tweet to show the layout.', time: '5h ago', image: 'https://via.placeholder.com/150' },
-  { id: '4', user: 'User4', content: 'Another example tweet to show the layout.', time: '5h ago', image: 'https://via.placeholder.com/150' },
-  { id: '5', user: 'User5', content: 'Another example tweet to show the layout.', time: '5h ago', image: 'https://via.placeholder.com/150' },
-];
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HomeScreen = ({ navigation }) => {
-  const { top, bottom } = useSafeAreaInsets(); // Pegando os insets para adicionar padding
+  const [posts, setPosts] = useState([]);
+  const { top, bottom } = useSafeAreaInsets();
+
+  useEffect(() => {
+    // Carregar os posts armazenados ao inicializar a tela
+    loadPosts();
+  }, []);
+
+  // Função para carregar posts do AsyncStorage
+  const loadPosts = async () => {
+    try {
+      const storedPosts = await AsyncStorage.getItem('@posts');
+      if (storedPosts !== null) {
+        setPosts(JSON.parse(storedPosts));
+      } else {
+        // Se não houver posts salvos, usar os dados de exemplo
+        const examplePosts = [
+          { id: '1', name: 'John Doe', description: 'Developer at XYZ', content: 'This is a sample tweet. #reactnative', time: '2h ago', image: 'https://via.placeholder.com/150' },
+          { id: '2', name: 'Jane', description: 'Designer at ABC', content: 'Another example tweet to show the layout.', time: '5h ago', image: 'https://via.placeholder.com/150' },
+          { id: '3', name: 'Alice', description: 'Product Manager at LMN', content: 'Another example tweet to show the layout.', time: '6h ago', image: 'https://via.placeholder.com/150' },
+          { id: '4', name: 'Bob', description: 'CTO at Startup', content: 'Another example tweet to show the layout.', time: '7h ago', image: 'https://via.placeholder.com/150' },
+          { id: '5', name: 'Charlie', description: 'Engineer at QRS', content: 'Another example tweet to show the layout.', time: '9h ago', image: 'https://via.placeholder.com/150' },
+        ];
+        setPosts(examplePosts);
+        await AsyncStorage.setItem('@posts', JSON.stringify(examplePosts));
+      }
+    } catch (error) {
+      console.error('Erro ao carregar os posts:', error);
+    }
+  };
 
   // Função para renderizar cada item do FlatList
   const renderPost = ({ item }) => (
     <View style={styles.postContainer}>
-      <Image source={{ uri: item.image }} style={styles.postImage} />
+      <TouchableOpacity onPress={() => navigation.navigate('UserProfile', { userId: item.id })}>
+        <Image source={{ uri: item.image }} style={styles.postImage} />
+      </TouchableOpacity>
       <View style={styles.postContent}>
-        <Text style={styles.userName}>{item.user}</Text>
+        <Text style={styles.userName}>{item.name}</Text>
         <Text style={styles.postText}>{item.content}</Text>
         <Text style={styles.postTime}>{item.time}</Text>
       </View>
     </View>
   );
 
-  // onpress com função que abre a aba lateral do codigo. 
   return (
     <SafeAreaView style={[styles.container, { paddingTop: top, paddingBottom: bottom }]}>
       <View style={styles.header}>
@@ -130,4 +151,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreen
+export default HomeScreen;

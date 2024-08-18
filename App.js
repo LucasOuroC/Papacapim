@@ -15,6 +15,7 @@ import HomeScreen from "./screens/HomeScreen";
 import CadastroScreen from "./screens/CadastroScreen";
 import PostagensScreen from "./screens/PostagensScreen";
 import PerfilScreen from "./screens/PerfilScreen";
+import UserProfileScreen from "./screens/UserProfileScreen"
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -24,20 +25,20 @@ function CustomDrawerContent(props) {
     <View style={styles.drawerContent}>
       <TouchableOpacity onPress={() => props.navigation.navigate("Perfil")}>
         <Image
-            source={require("./assets/Lucas Perfil.jpg")}
-            style={styles.profileImage}
-          />
-          <Text
-            style={styles.drawerItem1}
-          >
-            Perfil
-          </Text>
+          source={require("./assets/Lucas Perfil.jpg")}
+          style={styles.profileImage}
+        />
+        <Text
+          style={styles.drawerItem1}
+        >
+          Configuração do Perfil
+        </Text>
       </TouchableOpacity>
       <Text
         style={styles.drawerItem}
         onPress={() => props.navigation.navigate("Postagens")}
       >
-        Postagens Recentes
+        Criar uma canção
       </Text>
     </View>
   );
@@ -85,6 +86,11 @@ export default function App() {
           name="Postagens"
           component={PostagensScreen}
         />
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="UserProfile"
+          component={UserProfileScreen}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -105,9 +111,9 @@ const styles = StyleSheet.create({
     borderBottomColor: "#fff",
   },
   drawerItem1: {
-    marginTop: -30,
+    marginTop: -47,
     marginLeft: 70,
-    marginBottom: 50,
+    marginBottom: 20,
     marginVertical: 16,
     color: "#ffffff",
     fontSize: 18,
