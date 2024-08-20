@@ -6,7 +6,7 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Image,
-} from "react-native"; // Certifique-se de importar todos os componentes necessários
+} from "react-native"; 
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
@@ -25,20 +25,20 @@ function CustomDrawerContent(props) {
     <View style={styles.drawerContent}>
       <TouchableOpacity onPress={() => props.navigation.navigate("Perfil")}>
         <Image
-          source={require("./assets/Lucas Perfil.jpg")}
-          style={styles.profileImage}
-        />
-        <Text
-          style={styles.drawerItem1}
-        >
-          Configuração do Perfil
-        </Text>
+            source={require("./assets/Lucas Perfil.jpg")}
+            style={styles.profileImage}
+          />
+          <Text
+            style={styles.drawerItem1}
+          >
+            Perfil
+          </Text>
       </TouchableOpacity>
       <Text
         style={styles.drawerItem}
         onPress={() => props.navigation.navigate("Postagens")}
       >
-        Criar uma canção
+        Postagens Recentes
       </Text>
     </View>
   );
@@ -111,9 +111,9 @@ const styles = StyleSheet.create({
     borderBottomColor: "#fff",
   },
   drawerItem1: {
-    marginTop: -47,
+    marginTop: -30,
     marginLeft: 70,
-    marginBottom: 20,
+    marginBottom: 50,
     marginVertical: 16,
     color: "#ffffff",
     fontSize: 18,

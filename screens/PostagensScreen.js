@@ -7,19 +7,18 @@ const PostScreen = ({ navigation, route }) => {
 
   const handlePost = () => {
     if (postContent.trim() !== '') {
-      // Adicionando o novo post à lista de posts na Home
       const newPost = {
         id: Math.random().toString(),
-        user: 'Novo Usuario',  // Pode ser substituído pelo nome do usuário real
+        user: 'Novo Usuario',  
         content: postContent,
         time: 'Agora',
-        image: 'https://via.placeholder.com/150',  // Pode ser substituído por uma imagem real
+        image: 'https://via.placeholder.com/150',  
       };
 
       // Passando o novo post para a Home
       route.params.addPost(newPost);
 
-      // Retornando para a Home
+      // Rotornar para a home
       navigation.goBack();
     }
   };

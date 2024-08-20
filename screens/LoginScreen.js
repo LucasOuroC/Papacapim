@@ -7,10 +7,12 @@ export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  // Redireciona ao cadastro
   const goCad = () => {
     navigation.replace('Cadastro');
   };
 
+  // Logica de login para a acesso 
   const handleLogin = () => {
     if (email === '' && password === '') {
       navigation.replace('Home');
