@@ -5,6 +5,7 @@ import { FontAwesome } from '@expo/vector-icons';
 const PostScreen = ({ navigation, route }) => {
   const [postContent, setPostContent] = useState('');
 
+  //Ação do post ainda incompleta
   const handlePost = () => {
     if (postContent.trim() !== '') {
       const newPost = {
@@ -24,6 +25,7 @@ const PostScreen = ({ navigation, route }) => {
   };
 
   return (
+    //Tela de postagem
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>

@@ -51,6 +51,7 @@ const HomeScreen = ({ navigation }) => {
   );
 
   return (
+    //onpress para abrir a aba lateral
     <SafeAreaView style={[styles.container, { paddingTop: top, paddingBottom: bottom }]}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.toggleDrawer()}>

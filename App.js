@@ -20,6 +20,7 @@ import UserProfileScreen from "./screens/UserProfileScreen"
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
+//Drawer com aba lateral da home
 function CustomDrawerContent(props) {
   return (
     <View style={styles.drawerContent}>
@@ -31,14 +32,14 @@ function CustomDrawerContent(props) {
           <Text
             style={styles.drawerItem1}
           >
-            Perfil
+            Configuração do Perfil
           </Text>
       </TouchableOpacity>
       <Text
         style={styles.drawerItem}
         onPress={() => props.navigation.navigate("Postagens")}
       >
-        Postagens Recentes
+        Fazer uma canção
       </Text>
     </View>
   );
@@ -111,9 +112,9 @@ const styles = StyleSheet.create({
     borderBottomColor: "#fff",
   },
   drawerItem1: {
-    marginTop: -30,
+    marginTop: -45,
     marginLeft: 70,
-    marginBottom: 50,
+    marginBottom: 20,
     marginVertical: 16,
     color: "#ffffff",
     fontSize: 18,
