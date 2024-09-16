@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Image } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Image, Alert } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import * as Animatable from "react-native-animatable";
 
 export default function RegisterScreen({ navigation }) {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [login, setLogin] = useState('');
+  const [nome, setNome] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
@@ -13,11 +13,39 @@ export default function RegisterScreen({ navigation }) {
     navigation.replace('Login')
   }
 
-  const handleRegister = () => {
-    if (name && email && password && confirmPassword) {
+  const handleRegister = async () => {
+    if (login && nome && password && confirmPassword) {
       if (password === confirmPassword) {
         
-        navigation.replace('Home');
+        try {
+          const response = await fetch("https://api.papacapim.just.pro.br/users", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+             "user":{
+              "login": login,
+              "name": nome,
+              "password": password,
+              "password_confirmation": confirmPassword,
+             }
+            }),
+          });
+          const data = await response.json();
+          console.log(data)
+
+          if (response.ok) {
+            Alert.alert("Usuario Criado!");
+            navigation.navigate("Login");
+          } else {
+            Alert.alert("Erro de criação", data.message || "Tente novamente.")
+          }
+
+        } catch (error) {
+          console.error(error);
+          Alert.alert("Erro de conexão", "Não foi possível conectar ao servidor.");
+        }
       } else {
         alert('As senhas não coincidem');
       }
@@ -43,17 +71,16 @@ export default function RegisterScreen({ navigation }) {
         <Text style={styles.title}>Cadastro Usuario</Text>
         <TextInput
           style={styles.input}
-          placeholder="Nome"
-          value={name}
-          onChangeText={setName}
+          placeholder="Login"
+          value={login}
+          onChangeText={setLogin}
           autoCapitalize="words"
         />
         <TextInput
           style={styles.input}
-          placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
+          placeholder="Nome"
+          value={nome}
+          onChangeText={setNome}
           autoCapitalize="none"
         />
         <TextInput

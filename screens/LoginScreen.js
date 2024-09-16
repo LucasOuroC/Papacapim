@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Image, Alert } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import * as Animatable from "react-native-animatable";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function LoginScreen({ navigation }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [login, setLogin] = useState("");
+  const [password, setPassword] = useState("");
 
   // Redireciona ao cadastro
   const goCad = () => {
@@ -13,11 +14,37 @@ export default function LoginScreen({ navigation }) {
   };
 
   // Logica de login para a acesso 
-  const handleLogin = () => {
-    if (email === '' && password === '') {
-      navigation.replace('Home');
-    } else {
-      Alert.alert('Login Failed', 'Invalid email or password. Please try again.');
+  const handleLogin = async () => {
+    try {
+      const response = await fetch("https://api.papacapim.just.pro.br/sessions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          login: login, // Usa o valor do estado login
+          password: password, // Usa o valor do estado password
+        }),
+      });
+
+      const data = await response.json();
+
+      // Adicione este console.log para verificar o conteúdo da resposta
+      console.log(data);
+
+      if (response.ok) {
+        await AsyncStorage.setItem('userToken', data.token);
+        Alert.alert("Login bem-sucedido!");
+        navigation.navigate("Home");
+      } else {
+        // Verifica se a resposta contém uma mensagem de erro e exibe-a
+        const errorMessage = data.message || "Tente novamente.";
+        Alert.alert("Erro no login", errorMessage);
+      }
+        
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Erro de conexão", "Não foi possível conectar ao servidor.");
     }
   };
 
@@ -32,15 +59,14 @@ export default function LoginScreen({ navigation }) {
       <Text style={styles.title}>Papacapim</Text>
       <TextInput
         style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
+        placeholder="Login"
+        value={login}
+        onChangeText={setLogin}
         autoCapitalize="none"
       />
       <TextInput
         style={styles.input}
-        placeholder="Password"
+        placeholder="Senha"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
