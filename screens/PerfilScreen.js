@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, SafeAreaView, TextInput } from 'react-native';
+import React, {useState} from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Image, SafeAreaView, TextInput, Alert } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons'; 
 import { useNavigation } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -7,16 +7,52 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 const ProfileSettingsScreen = () => {
   const navigation = useNavigation();
   const { top, bottom } = useSafeAreaInsets();
+  const [login, setLogin] = useState('');
+  const [nome, setNome] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const handleSave = async () => {
+    if (password === confirmPassword) {
+      try {
+        const response = await fetch("https://api.papacapim.just.pro.br/users/1", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+           "user":{
+                "login": login,
+                "name": nome,
+                "password": password,
+                "password_confirmation": confirmPassword,
+               }
+          }),
+        });
+  
+        const data = await response.json();
+        console.log(data)
+  
+        if (response.ok) {
+          Alert.alert("Usuario Criado!");
+          navigation.navigate("Login");
+        } else {
+          Alert.alert("Erro de atualização", data.message || "Tente novamente.")
+        }
+        
+      } catch (error) {
+        console.error(error);
+        Alert.alert("Erro de conexão", "Não foi possível conectar ao servidor.");
+      }
+  
+    }
+      
+    }
+    
 
   return (
     <SafeAreaView style={[styles.container, { paddingTop: top, paddingBottom: bottom }]}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.toggleDrawer()}>
-          <Image
-            source={require('../assets/Lucas Perfil.jpg')} 
-            style={styles.profileImage}
-          />
-        </TouchableOpacity>
         <Text style={styles.headerTitle}>Configurações</Text>
         <TouchableOpacity
           style={styles.backButton}
@@ -26,27 +62,35 @@ const ProfileSettingsScreen = () => {
         </TouchableOpacity>
       </View>
       <View style={styles.profileSection}>
-        <Image
-          source={require('../assets/Lucas Perfil.jpg')} 
-          style={styles.largeProfileImage}
+      <TextInput
+          style={styles.input}
+          placeholder="Login"
+          value={login}
+          onChangeText={setLogin}
+          autoCapitalize="words"
         />
         <TextInput
           style={styles.input}
           placeholder="Nome"
-          placeholderTextColor="#aaaaaa"
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          placeholderTextColor="#aaaaaa"
+          value={nome}
+          onChangeText={setNome}
+          autoCapitalize="none"
         />
         <TextInput
           style={styles.input}
           placeholder="Senha"
-          placeholderTextColor="#aaaaaa"
+          value={password}
+          onChangeText={setPassword}
           secureTextEntry
         />
-        <TouchableOpacity style={styles.saveButton}>
+        <TextInput
+          style={styles.input}
+          placeholder="Confirme a Senha"
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+          secureTextEntry
+        />
+        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
           <Text style={styles.saveButtonText}>Salvar</Text>
         </TouchableOpacity>
       </View>
@@ -97,10 +141,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 20,
+    marginTop: -50,
   },
   input: {
     backgroundColor: '#1E1E1E',
-    color: '#ffffff',
+    color: '#FFF',
     borderRadius: 5,
     padding: 10,
     marginBottom: 15,
@@ -109,6 +154,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#1DA1F2',
     borderRadius: 5,
     padding: 15,
+    marginTop: 60,
     alignItems: 'center',
   },
   saveButtonText: {

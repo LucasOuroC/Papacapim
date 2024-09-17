@@ -40,7 +40,6 @@ const HomeScreen = ({ navigation }) => {
   const renderPost = ({ item }) => (
     <View style={styles.postContainer}>
       <TouchableOpacity onPress={() => navigation.navigate('UserProfile', { userId: item.id })}>
-        <Image source={{ uri: item.image }} style={styles.postImage} />
       </TouchableOpacity>
       <View style={styles.postContent}>
         <Text style={styles.userName}>{item.name}</Text>
@@ -55,9 +54,8 @@ const HomeScreen = ({ navigation }) => {
     <SafeAreaView style={[styles.container, { paddingTop: top, paddingBottom: bottom }]}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.toggleDrawer()}>
-          <Image source={require('../assets/Lucas Perfil.jpg')} style={styles.profileImage} />
+          <Text style={styles.headerTitle}>Perfil</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Perfil</Text>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.navigate('Login')}
@@ -100,6 +98,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginLeft: 15,
+    marginTop: 10,
     flex: 1,
   },
   profileImage: {

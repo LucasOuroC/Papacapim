@@ -25,10 +25,6 @@ function CustomDrawerContent(props) {
   return (
     <View style={styles.drawerContent}>
       <TouchableOpacity onPress={() => props.navigation.navigate("Perfil")}>
-        <Image
-            source={require("./assets/Lucas Perfil.jpg")}
-            style={styles.profileImage}
-          />
           <Text
             style={styles.drawerItem1}
           >
@@ -112,8 +108,8 @@ const styles = StyleSheet.create({
     borderBottomColor: "#fff",
   },
   drawerItem1: {
-    marginTop: -45,
-    marginLeft: 70,
+    marginTop: 80,
+    marginLeft: 0,
     marginBottom: 20,
     marginVertical: 16,
     color: "#ffffff",
