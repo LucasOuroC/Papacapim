@@ -13,7 +13,7 @@ export default function LoginScreen({ navigation }) {
     navigation.replace('Cadastro');
   };
 
-  // Logica de login para a acesso 
+  // Lógica de login
   const handleLogin = async () => {
     try {
       const response = await fetch("https://api.papacapim.just.pro.br/sessions", {
@@ -29,11 +29,14 @@ export default function LoginScreen({ navigation }) {
 
       const data = await response.json();
 
-      // Adicione este console.log para verificar o conteúdo da resposta
+      // Verifica o retorno do login
       console.log(data);
 
       if (response.ok) {
+        // Armazena o token e o userId no AsyncStorage
         await AsyncStorage.setItem('userToken', data.token);
+        await AsyncStorage.setItem('userId', data.id.toString()); // Corrige o setItem para salvar o userId como string
+
         Alert.alert("Login bem-sucedido!");
         navigation.navigate("Home");
       } else {
