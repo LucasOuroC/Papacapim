@@ -37,6 +37,12 @@ function CustomDrawerContent(props) {
       >
         Fazer uma canção
       </Text>
+      <Text
+        style={styles.drawerItem}
+        onPress={() => props.navigation.navigate("Postagens")}
+      >
+        Realizar uma busca
+      </Text>
     </View>
   );
 }

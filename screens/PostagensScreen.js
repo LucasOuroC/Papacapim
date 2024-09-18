@@ -1,31 +1,60 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const PostScreen = ({ navigation, route }) => {
   const [postContent, setPostContent] = useState('');
 
-  //Ação do post ainda incompleta
-  const handlePost = () => {
-    if (postContent.trim() !== '') {
-      const newPost = {
-        id: Math.random().toString(),
-        user: 'Novo Usuario',  
-        content: postContent,
-        time: 'Agora',
-        image: 'https://via.placeholder.com/150',  
-      };
+  const handlePost = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      console.log('Token:', token); // Verifique se o token está sendo recuperado corretamente
 
-      // Passando o novo post para a Home
-      route.params.addPost(newPost);
+      if (!token) {
+        console.error('Token de autenticação não encontrado.');
+        return;
+      }
 
-      // Rotornar para a home
+      if (postContent.trim() === '') {
+        console.warn('O conteúdo do post não pode estar vazio.');
+        return;
+      }
+
+      const response = await fetch('https://api.papacapim.just.pro.br/posts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          "x-session-token": token,
+        },
+        body: JSON.stringify({
+          post: {
+            message: postContent,
+          },
+        }),
+      });
+
+      console.log('Status da resposta:', response.status); // Verifique o status da resposta
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`HTTP error! Status: ${response.status}, Text: ${errorText}`);
+      }
+
+      const responseData = await response.json();
+      console.log('Resposta da API:', responseData);
+
+      if (route.params?.addPost) {
+        route.params.addPost(responseData);
+      }
+
       navigation.goBack();
+    } catch (error) {
+      console.error('Erro ao criar postagem:', error);
     }
   };
 
   return (
-    //Tela de postagem
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>

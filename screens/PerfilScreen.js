@@ -46,9 +46,8 @@ const ProfileSettingsScreen = () => {
   
         const data = await response.json();
   
-        // Logs detalhados para inspeção
-        console.log('Response status:', response.status); // Código de status HTTP
-        console.log('Response data:', data); // Resposta completa da API
+        console.log('Response status:', response.status); 
+        console.log('Response data:', data); 
   
         if (response.ok) {
           Alert.alert("Usuário Atualizado!");

@@ -1,57 +1,98 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image, SafeAreaView } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons'; 
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import React, { useState, useEffect } from 'react';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HomeScreen = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
-  const { top, bottom } = useSafeAreaInsets();
 
   useEffect(() => {
-    // Carregar os posts armazenados ao inicializar a tela
     loadPosts();
   }, []);
 
-  // Função para carregar posts do AsyncStorage
   const loadPosts = async () => {
     try {
-      const storedPosts = await AsyncStorage.getItem('@posts');
-      if (storedPosts !== null) {
-        setPosts(JSON.parse(storedPosts));
+      const token = await AsyncStorage.getItem('userToken');
+      console.log('Token:', token); // Verifica se o token está sendo recuperado corretamente
+
+      if (!token) {
+        console.error('Token de autenticação não encontrado.');
+        return;
+      }
+
+      const response = await fetch('https://api.papacapim.just.pro.br/posts', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-session-token': token, // Certifique-se de que este é o cabeçalho correto
+        },
+      });
+
+      console.log('Status da resposta:', response.status);
+      const data = await response.json();
+      console.log('Dados da API:', data);
+
+      // Verifica se a resposta é um array
+      if (Array.isArray(data)) {
+        setPosts(data);
       } else {
-        // Se não houver posts salvos, usar os dados de exemplo
-        const examplePosts = [
-          { id: '1', name: 'John Doe', description: 'Developer at XYZ', content: 'This is a sample tweet. #reactnative', time: '2h ago', image: 'https://via.placeholder.com/150' },
-          { id: '2', name: 'Jane', description: 'Designer at ABC', content: 'Another example tweet to show the layout.', time: '5h ago', image: 'https://via.placeholder.com/150' },
-          { id: '3', name: 'Alice', description: 'Product Manager at LMN', content: 'Another example tweet to show the layout.', time: '6h ago', image: 'https://via.placeholder.com/150' },
-          { id: '4', name: 'Bob', description: 'CTO at Startup', content: 'Another example tweet to show the layout.', time: '7h ago', image: 'https://via.placeholder.com/150' },
-          { id: '5', name: 'Charlie', description: 'Engineer at QRS', content: 'Another example tweet to show the layout.', time: '9h ago', image: 'https://via.placeholder.com/150' },
-        ];
-        setPosts(examplePosts);
-        await AsyncStorage.setItem('@posts', JSON.stringify(examplePosts));
+        console.error('A resposta da API não é um array:', data);
       }
     } catch (error) {
       console.error('Erro ao carregar os posts:', error);
     }
   };
 
-  // Função para renderizar cada item do FlatList
+  const addPost = (newPost) => {
+    setPosts((prevPosts) => [newPost, ...prevPosts]);
+  };
+
   const renderPost = ({ item }) => (
     <View style={styles.postContainer}>
-      <TouchableOpacity onPress={() => navigation.navigate('UserProfile', { userId: item.id })}>
-      </TouchableOpacity>
-      <View style={styles.postContent}>
-        <Text style={styles.userName}>{item.name}</Text>
-        <Text style={styles.postText}>{item.content}</Text>
-        <Text style={styles.postTime}>{item.time}</Text>
-      </View>
+      <Text style={styles.userName}>{item.user_login}</Text>
+      <Text style={styles.postText}>{item.message}</Text>
     </View>
   );
 
+  const backhome = async () => {
+    try {
+      const response = await fetch(`https://api.papacapim.just.pro.br/users/${userId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "x-session-token": token,
+        },
+        body: JSON.stringify({
+          "user": {
+            "login": login,
+            "name": nome,
+            "password": password,
+            "password_confirmation": confirmPassword,
+          }
+        }),
+      });
+
+      const data = await response.json();
+
+      console.log('Response status:', response.status); 
+      console.log('Response data:', data); 
+
+      if (response.ok) {
+        Alert.alert("Usuário Atualizado!");
+        navigation.navigate("Login");
+      } else {
+        const errorMessage = data.message || "Erro de atualização";
+        Alert.alert("Erro de atualização", errorMessage);
+      }
+
+    } catch (error) {
+      console.error('Erro de conexão:', error);
+      Alert.alert("Erro de conexão", "Não foi possível conectar ao servidor.");
+    }
+  }
+
   return (
-    //onpress para abrir a aba lateral
-    <SafeAreaView style={[styles.container, { paddingTop: top, paddingBottom: bottom }]}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.toggleDrawer()}>
           <Text style={styles.headerTitle}>Perfil</Text>
@@ -66,11 +107,11 @@ const HomeScreen = ({ navigation }) => {
       <FlatList
         data={posts}
         renderItem={renderPost}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item.id.toString()}
       />
       <TouchableOpacity
         style={styles.floatingButton}
-        onPress={() => navigation.navigate('Postagens')}
+        onPress={() => navigation.navigate('Postagens', { addPost })}
       >
         <FontAwesome name="plus" size={24} color="#ffffff"/>
       </TouchableOpacity>
@@ -78,17 +119,17 @@ const HomeScreen = ({ navigation }) => {
   );
 };
 
-// Definições de estilo
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212', 
+    backgroundColor: '#121212',
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#1E1E1E',
     padding: 15,
+    marginTop: 50,
     borderBottomWidth: 1,
     borderBottomColor: '#333',
     justifyContent: 'space-between',
@@ -101,38 +142,19 @@ const styles = StyleSheet.create({
     marginTop: 10,
     flex: 1,
   },
-  profileImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-  },
   postContainer: {
-    flexDirection: 'row',
     padding: 10,
     backgroundColor: '#1E1E1E',
     borderBottomWidth: 1,
     borderBottomColor: '#333',
   },
-  postImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 10,
-  },
-  postContent: {
-    flex: 1,
-  },
   userName: {
     color: '#ffffff',
     fontWeight: 'bold',
-    marginBottom: 5,
   },
   postText: {
     color: '#ffffff',
-    marginBottom: 5,
-  },
-  postTime: {
-    color: '#aaaaaa',
+    marginTop: 5,
   },
   floatingButton: {
     position: 'absolute',
