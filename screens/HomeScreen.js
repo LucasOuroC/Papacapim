@@ -13,7 +13,7 @@ const HomeScreen = ({ navigation }) => {
   const loadPosts = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      console.log('Token:', token); // Verifica se o token está sendo recuperado corretamente
+      console.log('Token:', token); 
 
       if (!token) {
         console.error('Token de autenticação não encontrado.');
@@ -24,7 +24,7 @@ const HomeScreen = ({ navigation }) => {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'x-session-token': token, // Certifique-se de que este é o cabeçalho correto
+          'x-session-token': token, 
         },
       });
 
@@ -32,7 +32,6 @@ const HomeScreen = ({ navigation }) => {
       const data = await response.json();
       console.log('Dados da API:', data);
 
-      // Verifica se a resposta é um array
       if (Array.isArray(data)) {
         setPosts(data);
       } else {
@@ -48,48 +47,14 @@ const HomeScreen = ({ navigation }) => {
   };
 
   const renderPost = ({ item }) => (
-    <View style={styles.postContainer}>
+    <TouchableOpacity 
+      style={styles.postContainer}
+      onPress={() => navigation.navigate('UserProfile', { login: item.user_login })} 
+    >
       <Text style={styles.userName}>{item.user_login}</Text>
       <Text style={styles.postText}>{item.message}</Text>
-    </View>
+    </TouchableOpacity>
   );
-
-  const backhome = async () => {
-    try {
-      const response = await fetch(`https://api.papacapim.just.pro.br/users/${userId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          "x-session-token": token,
-        },
-        body: JSON.stringify({
-          "user": {
-            "login": login,
-            "name": nome,
-            "password": password,
-            "password_confirmation": confirmPassword,
-          }
-        }),
-      });
-
-      const data = await response.json();
-
-      console.log('Response status:', response.status); 
-      console.log('Response data:', data); 
-
-      if (response.ok) {
-        Alert.alert("Usuário Atualizado!");
-        navigation.navigate("Login");
-      } else {
-        const errorMessage = data.message || "Erro de atualização";
-        Alert.alert("Erro de atualização", errorMessage);
-      }
-
-    } catch (error) {
-      console.error('Erro de conexão:', error);
-      Alert.alert("Erro de conexão", "Não foi possível conectar ao servidor.");
-    }
-  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -104,11 +69,15 @@ const HomeScreen = ({ navigation }) => {
           <FontAwesome name="arrow-left" size={24} color="#ffffff" />
         </TouchableOpacity>
       </View>
+      
+      {/* FlatList com barra de rolagem visível */}
       <FlatList
         data={posts}
         renderItem={renderPost}
         keyExtractor={item => item.id.toString()}
+        showsVerticalScrollIndicator={true} 
       />
+
       <TouchableOpacity
         style={styles.floatingButton}
         onPress={() => navigation.navigate('Postagens', { addPost })}
@@ -122,7 +91,7 @@ const HomeScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212',
+    backgroundColor: '#1E1E1E',
   },
   header: {
     flexDirection: 'row',
@@ -149,7 +118,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#333',
   },
   userName: {
-    color: '#ffffff',
+    color: '#A9A9A9',
     fontWeight: 'bold',
   },
   postText: {

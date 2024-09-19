@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 
 const PostScreen = ({ navigation, route }) => {
   const [postContent, setPostContent] = useState('');
@@ -9,7 +10,7 @@ const PostScreen = ({ navigation, route }) => {
   const handlePost = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      console.log('Token:', token); // Verifique se o token está sendo recuperado corretamente
+      console.log('Token:', token); 
 
       if (!token) {
         console.error('Token de autenticação não encontrado.');
@@ -34,7 +35,7 @@ const PostScreen = ({ navigation, route }) => {
         }),
       });
 
-      console.log('Status da resposta:', response.status); // Verifique o status da resposta
+      console.log('Status da resposta:', response.status); 
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -48,7 +49,7 @@ const PostScreen = ({ navigation, route }) => {
         route.params.addPost(responseData);
       }
 
-      navigation.goBack();
+      navigation.replace("Home");
     } catch (error) {
       console.error('Erro ao criar postagem:', error);
     }
@@ -88,6 +89,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#1E1E1E',
     padding: 15,
+    marginTop: 30,
     borderBottomWidth: 1,
     borderBottomColor: '#333',
   },

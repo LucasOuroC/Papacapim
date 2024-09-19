@@ -16,6 +16,7 @@ import CadastroScreen from "./screens/CadastroScreen";
 import PostagensScreen from "./screens/PostagensScreen";
 import PerfilScreen from "./screens/PerfilScreen";
 import UserProfileScreen from "./screens/UserProfileScreen"
+import BuscaProfileScreen from "./screens/BuscaProfileScreen"
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -39,9 +40,9 @@ function CustomDrawerContent(props) {
       </Text>
       <Text
         style={styles.drawerItem}
-        onPress={() => props.navigation.navigate("Postagens")}
+        onPress={() => props.navigation.navigate("BuscaProfile")}
       >
-        Realizar uma busca
+        Realizar uma busca por Usuario
       </Text>
     </View>
   );
@@ -56,6 +57,7 @@ function DrawerNavigator() {
       <Drawer.Screen name="Home" component={HomeScreen} />
       <Drawer.Screen name="Postagens" component={PostagensScreen} />
       <Drawer.Screen name="Perfil" component={PerfilScreen} />
+      <Drawer.Screen name="BuscaProfile" component={BuscaProfileScreen} />
     </Drawer.Navigator>
   );
 }
@@ -93,6 +95,11 @@ export default function App() {
           options={{ headerShown: false }}
           name="UserProfile"
           component={UserProfileScreen}
+        />
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="BuscaProfile"
+          component={BuscaProfileScreen}
         />
       </Stack.Navigator>
     </NavigationContainer>
