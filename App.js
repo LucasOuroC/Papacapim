@@ -17,6 +17,7 @@ import PostagensScreen from "./screens/PostagensScreen";
 import PerfilScreen from "./screens/PerfilScreen";
 import UserProfileScreen from "./screens/UserProfileScreen"
 import BuscaProfileScreen from "./screens/BuscaProfileScreen"
+import UserPerfilScreen from "./screens/UserPerfilScreen"
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -32,6 +33,12 @@ function CustomDrawerContent(props) {
             Configuração do Perfil
           </Text>
       </TouchableOpacity>
+      <Text
+        style={styles.drawerItem}
+        onPress={() => props.navigation.navigate("UserPerfil")}
+      >
+        Perfil Usuario
+      </Text>
       <Text
         style={styles.drawerItem}
         onPress={() => props.navigation.navigate("Postagens")}
@@ -58,6 +65,7 @@ function DrawerNavigator() {
       <Drawer.Screen name="Postagens" component={PostagensScreen} />
       <Drawer.Screen name="Perfil" component={PerfilScreen} />
       <Drawer.Screen name="BuscaProfile" component={BuscaProfileScreen} />
+      <Drawer.Screen name="UserPerfil" component={UserPerfilScreen} />
     </Drawer.Navigator>
   );
 }
@@ -100,6 +108,11 @@ export default function App() {
           options={{ headerShown: false }}
           name="BuscaProfile"
           component={BuscaProfileScreen}
+        />
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="UserPerfil"
+          component={UserPerfilScreen}
         />
       </Stack.Navigator>
     </NavigationContainer>

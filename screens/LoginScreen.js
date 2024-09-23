@@ -35,7 +35,7 @@ export default function LoginScreen({ navigation }) {
       if (response.ok) {
         // Armazena o token e o userId no AsyncStorage
         await AsyncStorage.setItem('userToken', data.token);
-        await AsyncStorage.setItem('userId', data.id.toString()); // Corrige o setItem para salvar o userId como string
+        await AsyncStorage.setItem('userLogin', data.user_login); // Corrige o setItem para salvar o userId como string
 
         Alert.alert("Login bem-sucedido!");
         navigation.navigate("Home");
