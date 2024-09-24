@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, SafeAreaView, ActivityIndicator } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HomeScreen = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(false); // Adicione o estado de carregamento
 
   useEffect(() => {
     loadPosts();
@@ -46,10 +47,18 @@ const HomeScreen = ({ navigation }) => {
     setPosts((prevPosts) => [newPost, ...prevPosts]);
   };
 
+  const handleUserPress = (login) => {
+    setLoading(true); // Iniciar o carregamento
+    setTimeout(() => {
+      setLoading(false); // Parar o carregamento após 3 segundos
+      navigation.navigate('UserProfile', { login }); // Navegar para a próxima tela
+    }, 2000); // Defina o tempo de carregamento aqui (3 segundos)
+  };
+
   const renderPost = ({ item }) => (
     <TouchableOpacity 
       style={styles.postContainer}
-      onPress={() => navigation.navigate('UserProfile', { login: item.user_login })} 
+      onPress={() => handleUserPress(item.user_login)} // Use a função handleUserPress
     >
       <Text style={styles.userName}>{item.user_login}</Text>
       <Text style={styles.postText}>{item.message}</Text>
@@ -69,14 +78,20 @@ const HomeScreen = ({ navigation }) => {
           <FontAwesome name="arrow-left" size={24} color="#ffffff" />
         </TouchableOpacity>
       </View>
-      
-      {/* FlatList com barra de rolagem visível */}
-      <FlatList
-        data={posts}
-        renderItem={renderPost}
-        keyExtractor={item => item.id.toString()}
-        showsVerticalScrollIndicator={true} 
-      />
+
+      {/* Mostrar o ActivityIndicator enquanto estiver carregando */}
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#1DA1F2" />
+        </View>
+      ) : (
+        <FlatList
+          data={posts}
+          renderItem={renderPost}
+          keyExtractor={item => item.id.toString()}
+          showsVerticalScrollIndicator={true} 
+        />
+      )}
 
       <TouchableOpacity
         style={styles.floatingButton}
@@ -139,6 +154,11 @@ const styles = StyleSheet.create({
   },
   backButton: {
     padding: 10,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

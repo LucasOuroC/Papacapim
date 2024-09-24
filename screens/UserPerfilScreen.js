@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Alert, SafeAreaView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { FontAwesome } from '@expo/vector-icons';
 
-const SettingsScreen = () => {
+const SettingsScreen = ({ navigation }) => {
   const [followers, setFollowers] = useState([]);
-  const [following, setFollowing] = useState([]);
   const [userLogin, setUserLogin] = useState('');
+  const [userName, setUserName] = useState('');
+  const [userCreatedAt, setUserCreatedAt] = useState('');
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -14,6 +16,19 @@ const SettingsScreen = () => {
       setUserLogin(login);
 
       try {
+        // Carregar dados do usuário logado
+        const userResponse = await fetch(`https://api.papacapim.just.pro.br/users/${login}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-session-token': token,
+          },
+        });
+
+        const userData = await userResponse.json();
+        setUserName(userData.name);
+        setUserCreatedAt(new Date(userData.created_at).toLocaleDateString());
+
         // Carregar seguidores
         const followersResponse = await fetch(`https://api.papacapim.just.pro.br/users/${login}/followers`, {
           method: 'GET',
@@ -24,41 +39,14 @@ const SettingsScreen = () => {
         });
 
         if (!followersResponse.ok) {
-          const errorText = await followersResponse.text();
-          console.error('Erro ao carregar seguidores:', errorText);
           Alert.alert('Erro', 'Não foi possível carregar os seguidores.');
           return;
         }
 
-        const followersText = await followersResponse.text();
-        const followersData = JSON.parse(followersText);
+        const followersData = await followersResponse.json();
+        console.log("Seguidores:", followersData);  // Agora você verá os dados de seguidores corretamente
         setFollowers(followersData);
-
-        // Carregar quem o usuário segue
-        const followingResponse = await fetch(`https://api.papacapim.just.pro.br/users/${login}/following`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-session-token': token,
-          },
-        });
-
-        if (!followingResponse.ok) {
-          if (followingResponse.status === 404) {
-            Alert.alert('Atenção', 'Você não está seguindo ninguém.');
-          } else {
-            const errorText = await followingResponse.text();
-            console.error('Erro ao carregar seguindo:', errorText);
-            Alert.alert('Erro', 'Não foi possível carregar quem você está seguindo.');
-          }
-          return;
-        }
-
-        const followingText = await followingResponse.text();
-        const followingData = JSON.parse(followingText);
-        setFollowing(followingData);
       } catch (error) {
-        console.error('Erro ao carregar dados do usuário:', error);
         Alert.alert('Erro de conexão', 'Não foi possível conectar ao servidor.');
       }
     };
@@ -67,9 +55,23 @@ const SettingsScreen = () => {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Configurações</Text>
+    <SafeAreaView style={styles.container}>
+      {/* Cabeçalho com botão de voltar */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.replace('Home')}>
+          <FontAwesome name="arrow-left" size={24} color="#ffffff" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Configurações</Text>
+      </View>
 
+      {/* Informações do usuário logado */}
+      <View style={styles.userInfo}>
+        <Text style={styles.userName}>{userName || 'Usuário'}</Text>
+        <Text style={styles.userLogin}>@{userLogin}</Text>
+        <Text style={styles.userCreatedAt}>Membro desde {userCreatedAt}</Text>
+      </View>
+
+      {/* Lista de Seguidores */}
       <Text style={styles.sectionTitle}>Seguidores</Text>
       {followers.length === 0 ? (
         <Text style={styles.noDataText}>Você não tem seguidores.</Text>
@@ -84,40 +86,51 @@ const SettingsScreen = () => {
           )}
         />
       )}
-
-      <Text style={styles.sectionTitle}>Seguindo</Text>
-      {following.length === 0 ? (
-        <Text style={styles.noDataText}>Você não está seguindo ninguém.</Text>
-      ) : (
-        <FlatList
-          data={following}
-          keyExtractor={(item) => item.followed_login || item.login}
-          renderItem={({ item }) => (
-            <TouchableOpacity style={styles.listItem}>
-              <Text style={styles.listItemText}>@{item.followed_login}</Text>
-            </TouchableOpacity>
-          )}
-        />
-      )}
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
     backgroundColor: '#1E1E1E',
+    padding: 16,
   },
-  title: {
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingBottom: 10,
+    marginTop: 40,
+    borderBottomWidth: 1,
+    borderBottomColor: '#333',
+  },
+  headerTitle: {
     fontSize: 24,
     color: '#ffffff',
-    marginBottom: 20,
+  },
+  userInfo: {
+    alignItems: 'center',
+    marginVertical: 20,
+  },
+  userName: {
+    fontSize: 22,
+    color: '#ffffff',
+    fontWeight: 'bold',
+  },
+  userLogin: {
+    fontSize: 18,
+    color: '#aaaaaa',
+  },
+  userCreatedAt: {
+    fontSize: 16,
+    color: '#888888',
   },
   sectionTitle: {
     fontSize: 20,
     color: '#ffffff',
     marginTop: 20,
+    marginBottom: 10,
   },
   noDataText: {
     color: '#ffffff',
