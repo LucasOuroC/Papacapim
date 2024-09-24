@@ -16,7 +16,6 @@ const SettingsScreen = ({ navigation }) => {
       setUserLogin(login);
 
       try {
-        // Carregar dados do usuário logado
         const userResponse = await fetch(`https://api.papacapim.just.pro.br/users/${login}`, {
           method: 'GET',
           headers: {
@@ -29,7 +28,6 @@ const SettingsScreen = ({ navigation }) => {
         setUserName(userData.name);
         setUserCreatedAt(new Date(userData.created_at).toLocaleDateString());
 
-        // Carregar seguidores
         const followersResponse = await fetch(`https://api.papacapim.just.pro.br/users/${login}/followers`, {
           method: 'GET',
           headers: {
@@ -44,8 +42,7 @@ const SettingsScreen = ({ navigation }) => {
         }
 
         const followersData = await followersResponse.json();
-        console.log("Seguidores:", followersData);  // Agora você verá os dados de seguidores corretamente
-        setFollowers(followersData);
+        console.log("Seguidores:", followersData);  
       } catch (error) {
         Alert.alert('Erro de conexão', 'Não foi possível conectar ao servidor.');
       }
@@ -56,7 +53,6 @@ const SettingsScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Cabeçalho com botão de voltar */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.replace('Home')}>
           <FontAwesome name="arrow-left" size={24} color="#ffffff" />
@@ -64,14 +60,12 @@ const SettingsScreen = ({ navigation }) => {
         <Text style={styles.headerTitle}>Configurações</Text>
       </View>
 
-      {/* Informações do usuário logado */}
       <View style={styles.userInfo}>
         <Text style={styles.userName}>{userName || 'Usuário'}</Text>
         <Text style={styles.userLogin}>@{userLogin}</Text>
         <Text style={styles.userCreatedAt}>Membro desde {userCreatedAt}</Text>
       </View>
 
-      {/* Lista de Seguidores */}
       <Text style={styles.sectionTitle}>Seguidores</Text>
       {followers.length === 0 ? (
         <Text style={styles.noDataText}>Você não tem seguidores.</Text>

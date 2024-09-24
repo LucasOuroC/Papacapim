@@ -39,7 +39,7 @@ export default function RegisterScreen({ navigation }) {
             Alert.alert("Usuario Criado!");
             navigation.navigate("Login");
           } else {
-            Alert.alert("Erro de criação", data.message || "Tente novamente.")
+            Alert.alert("Erro de criação", data.message || "Usuario possivel ja existente.")
           }
 
         } catch (error) {

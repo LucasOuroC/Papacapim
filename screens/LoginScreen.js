@@ -8,12 +8,10 @@ export default function LoginScreen({ navigation }) {
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
 
-  // Redireciona ao cadastro
   const goCad = () => {
     navigation.replace('Cadastro');
   };
 
-  // Lógica de login
   const handleLogin = async () => {
     try {
       const response = await fetch("https://api.papacapim.just.pro.br/sessions", {
@@ -22,25 +20,23 @@ export default function LoginScreen({ navigation }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          login: login, // Usa o valor do estado login
-          password: password, // Usa o valor do estado password
+          login: login, 
+          password: password, 
         }),
       });
 
       const data = await response.json();
 
-      // Verifica o retorno do login
       console.log(data);
 
       if (response.ok) {
-        // Armazena o token e o userId no AsyncStorage
+        
         await AsyncStorage.setItem('userToken', data.token);
-        await AsyncStorage.setItem('userLogin', data.user_login); // Corrige o setItem para salvar o userId como string
+        await AsyncStorage.setItem('userLogin', data.user_login); 
 
         Alert.alert("Login bem-sucedido!");
         navigation.navigate("Home");
       } else {
-        // Verifica se a resposta contém uma mensagem de erro e exibe-a
         const errorMessage = data.message || "Tente novamente.";
         Alert.alert("Erro no login", errorMessage);
       }

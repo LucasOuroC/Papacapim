@@ -4,7 +4,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const UserProfileScreen = ({ route, navigation }) => {
-  const { login } = route.params; // login do perfil que está sendo visualizado
+  const { login } = route.params; 
   const [user, setUser] = useState({});
   const [isFollowing, setIsFollowing] = useState(false);
   const [followerId, setFollowerId] = useState(null);
@@ -15,11 +15,10 @@ const UserProfileScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     if (user && user.login) {
-      checkFollowing(); // Verifica se o usuário já foi carregado
+      checkFollowing(); 
     }
   }, [user]);
 
-  // Função para carregar o perfil do usuário visualizado
   const loadUser = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
@@ -32,18 +31,16 @@ const UserProfileScreen = ({ route, navigation }) => {
       });
       const data = await response.json();
       setUser(data);
-      console.log('Dados do usuário:', data); // Log para verificar dados do usuário
+      console.log('Dados do usuário:', data); 
     } catch (error) {
       console.error('Erro ao carregar o usuário:', error);
     }
   };
 
-  // Função para verificar se o usuário autenticado já segue o perfil visualizado
-// Função para verificar se o usuário autenticado já segue o perfil visualizado
 const checkFollowing = async () => {
   try {
     const token = await AsyncStorage.getItem('userToken');
-    const currentUserLogin = await AsyncStorage.getItem('userLogin'); // login do usuário autenticado
+    const currentUserLogin = await AsyncStorage.getItem('userLogin'); 
 
     const response = await fetch(`https://api.papacapim.just.pro.br/users/${login}/followers`, {
       method: 'GET',
@@ -54,20 +51,19 @@ const checkFollowing = async () => {
     });
     const followers = await response.json();
 
-    console.log('Seguidores retornados:', followers); // Log para verificar seguidores retornados
+    console.log('Seguidores retornados:', followers); 
 
-    // Verificar se o usuário autenticado está na lista de seguidores
     console.log('Login atual:', currentUserLogin)
     const followerRelation = followers.find(follower => follower.follower_login === currentUserLogin);
 
     if (followerRelation) {
       setIsFollowing(true);
-      setFollowerId(followerRelation.follower_id); // Armazena o ID da relação de seguidor
-      console.log('Já está seguindo, ID da relação:', followerRelation.follower_id); // Log para confirmar seguimento
+      setFollowerId(followerRelation.follower_id); 
+      console.log('Já está seguindo, ID da relação:', followerRelation.follower_id); 
     } else {
       setIsFollowing(false);
-      setFollowerId(null); // Limpar ID caso não esteja seguindo
-      console.log('Não está seguindo ainda.', followerRelation.follower_id); // Log para confirmar que não está seguindo
+      setFollowerId(null); 
+      console.log('Não está seguindo ainda.', followerRelation.follower_id); 
     }
   } catch (error) {
     console.error('Erro ao verificar o status de seguir:', error);
@@ -75,12 +71,11 @@ const checkFollowing = async () => {
 };
 
 
-  // Função para seguir ou deixar de seguir
+  
   const handleFollow = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       if (isFollowing) {
-        // Deixar de seguir
         const response = await fetch(`https://api.papacapim.just.pro.br/users/${login}/followers/${followerId}`, {
           method: 'DELETE',
           headers: {
@@ -110,10 +105,9 @@ const checkFollowing = async () => {
 
         if (response.status === 201) {
           setIsFollowing(true);
-          setFollowerId(data.id);  // Armazena o ID da relação criada
+          setFollowerId(data.id);  
           Alert.alert('Você está seguindo');
         } else if (data?.followed_id?.[0] === 'has already been taken') {
-          // Se a API informar que o seguidor já existe
           Alert.alert('Você já está seguindo este usuário.');
         } else {
           Alert.alert('Erro ao seguir.');

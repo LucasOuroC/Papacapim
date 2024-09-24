@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HomeScreen = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(false); // Adicione o estado de carregamento
+  const [loading, setLoading] = useState(false); 
 
   useEffect(() => {
     loadPosts();
@@ -48,17 +48,17 @@ const HomeScreen = ({ navigation }) => {
   };
 
   const handleUserPress = (login) => {
-    setLoading(true); // Iniciar o carregamento
+    setLoading(true); 
     setTimeout(() => {
-      setLoading(false); // Parar o carregamento após 3 segundos
-      navigation.navigate('UserProfile', { login }); // Navegar para a próxima tela
-    }, 2000); // Defina o tempo de carregamento aqui (3 segundos)
+      setLoading(false); 
+      navigation.navigate('UserProfile', { login }); 
+    }, 2000); 
   };
 
   const renderPost = ({ item }) => (
     <TouchableOpacity 
       style={styles.postContainer}
-      onPress={() => handleUserPress(item.user_login)} // Use a função handleUserPress
+      onPress={() => handleUserPress(item.user_login)} 
     >
       <Text style={styles.userName}>{item.user_login}</Text>
       <Text style={styles.postText}>{item.message}</Text>
@@ -79,7 +79,6 @@ const HomeScreen = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      {/* Mostrar o ActivityIndicator enquanto estiver carregando */}
       {loading ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#1DA1F2" />
