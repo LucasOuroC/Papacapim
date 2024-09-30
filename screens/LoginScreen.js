@@ -34,7 +34,6 @@ export default function LoginScreen({ navigation }) {
         await AsyncStorage.setItem('userToken', data.token);
         await AsyncStorage.setItem('userLogin', data.user_login); 
 
-        Alert.alert("Login bem-sucedido!");
         navigation.navigate("Home");
       } else {
         const errorMessage = data.message || "Tente novamente.";

@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HomeScreen = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
-  const [likedPosts, setLikedPosts] = useState([]); // Novo estado para gerenciar curtidas
+  const [likedPosts, setLikedPosts] = useState([]); // Estado para armazenar posts curtidos
   const [loading, setLoading] = useState(false); 
 
   useEffect(() => {
@@ -14,8 +14,9 @@ const HomeScreen = ({ navigation }) => {
 
   const loadPosts = async () => {
     try {
+      setLoading(true);
       const token = await AsyncStorage.getItem('userToken');
-      console.log('Token:', token); 
+      console.log('Token:', token);
 
       if (!token) {
         console.error('Token de autenticação não encontrado.');
@@ -26,7 +27,7 @@ const HomeScreen = ({ navigation }) => {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'x-session-token': token, 
+          'x-session-token': token,
         },
       });
 
@@ -36,27 +37,61 @@ const HomeScreen = ({ navigation }) => {
 
       if (Array.isArray(data)) {
         setPosts(data);
+        // Após carregar os posts, buscar curtidas
+        await checkLikedPosts(data);
       } else {
         console.error('A resposta da API não é um array:', data);
       }
     } catch (error) {
       console.error('Erro ao carregar os posts:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const addPost = (newPost) => {
-    setPosts((prevPosts) => [newPost, ...prevPosts]);
-  };
+  const checkLikedPosts = async (posts) => {
+    const token = await AsyncStorage.getItem('userToken');
+    const userId = await AsyncStorage.getItem('userLogin'); // Pegando o Login do usuário logado
 
-  const handleUserPress = (login) => {
-    setLoading(true); 
-    setTimeout(() => {
-      setLoading(false); 
-      navigation.navigate('UserProfile', { login }); 
-    }, 1000); 
-  };
+    console.log('User ID do AsyncStorage:', userId);
 
-  // Função para curtir ou descurtir uma postagem
+    if (!token || !userId) {
+        console.error('Token ou userId não encontrados.');
+        return;
+    }
+
+    try {
+        const likedPostIds = [];
+        for (const post of posts) {
+            const response = await fetch(`https://api.papacapim.just.pro.br/posts/${post.id}/likes`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-session-token': token,
+                },
+            });
+
+            if (response.status === 200) {
+                const likes = await response.json();
+                console.log(`Curtidas para o post ${post.id}:`, likes);
+
+                // Verificar se o usuário logado curtiu o post
+                if (likes.some(like => like.user_login.toLowerCase() === userId.toLowerCase())) {
+                    likedPostIds.push(post.id);
+                }
+            } else {
+                console.error(`Erro ao carregar curtidas para o post ${post.id}:`, response.status);
+            }
+        }
+        setLikedPosts(likedPostIds); // Atualiza os posts curtidos
+        console.log('Posts curtidos:', likedPostIds); // Verifica os IDs atualizados
+    } catch (error) {
+        console.error('Erro ao buscar curtidas:', error);
+    }
+};
+
+  
+
   const handleLikePress = async (postId) => {
     const token = await AsyncStorage.getItem('userToken');
     if (!token) {
@@ -64,12 +99,11 @@ const HomeScreen = ({ navigation }) => {
       return;
     }
 
-    // Verificar se o post já está curtido
     const isLiked = likedPosts.includes(postId);
 
     try {
       if (isLiked) {
-        const userID = await AsyncStorage.getItem('userId')
+        const userID = await AsyncStorage.getItem('userId');
         const response = await fetch(`https://api.papacapim.just.pro.br/posts/${postId}/likes/${userID}`, {
           method: 'DELETE',
           headers: {
@@ -78,7 +112,7 @@ const HomeScreen = ({ navigation }) => {
           },
         });
 
-        if (response.status === 200 || 204) {
+        if (response.status === 200 || response.status === 204) {
           console.log(`Post ${postId} descurtido com sucesso.`);
           setLikedPosts((prevLikedPosts) =>
             prevLikedPosts.filter((id) => id !== postId)
@@ -87,7 +121,6 @@ const HomeScreen = ({ navigation }) => {
           console.error('Erro ao descurtir o post:', response.status);
         }
       } else {
-        // Se o post ainda não está curtido, enviar requisição POST para curtir
         const response = await fetch(`https://api.papacapim.just.pro.br/posts/${postId}/likes`, {
           method: 'POST',
           headers: {
@@ -115,9 +148,8 @@ const HomeScreen = ({ navigation }) => {
         <Text style={styles.userName}>{item.user_login}</Text>
         <Text style={styles.postText}>{item.message}</Text>
       </TouchableOpacity>
-  
+
       <View style={styles.iconContainer}>
-        {/* Botão de Curtir */}
         <TouchableOpacity onPress={() => handleLikePress(item.id)}>
           <FontAwesome
             name={likedPosts.includes(item.id) ? 'heart' : 'heart-o'}
@@ -126,52 +158,13 @@ const HomeScreen = ({ navigation }) => {
             style={styles.icon}
           />
         </TouchableOpacity>
-  
-        {/* Botão de Responder */}
+
         <TouchableOpacity onPress={() => handleCommentPress(item.id)}>
           <FontAwesome name="comment-o" size={24} color="#ffffff" style={styles.icon} />
         </TouchableOpacity>
       </View>
     </View>
   );
-  
-
-  const handleCommentPress = (postId) => {
-    navigation.navigate('ReplyScreen', { postId }); // Navega para a tela de resposta
-  };
-  
-  const sendReply = async (postId, message) => {
-    const token = await AsyncStorage.getItem('userToken');
-    if (!token) {
-      console.error('Token de autenticação não encontrado.');
-      return;
-    }
-  
-    try {
-      const response = await fetch(`https://api.papacapim.just.pro.br/posts/${postId}/replies`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-session-token': token,
-        },
-        body: JSON.stringify({
-          reply: { message }
-        }),
-      });
-  
-      if (response.status === 201) {
-        const data = await response.json();
-        console.log('Resposta enviada com sucesso:', data);
-        return data; // Retorna a nova resposta criada
-      } else {
-        console.error('Erro ao enviar resposta:', response.status);
-      }
-    } catch (error) {
-      console.error('Erro ao enviar resposta:', error);
-    }
-  };
-  
-  
 
   return (
     <SafeAreaView style={styles.container}>
@@ -185,9 +178,9 @@ const HomeScreen = ({ navigation }) => {
         />
         <TouchableOpacity
           style={styles.settingsButton}
-          onPress={() => navigation.navigate('Settings')}
+          onPress={() => navigation.navigate('Login')}
         >
-          <FontAwesome name="cog" size={24} color="#ffffff" />
+          <FontAwesome name="arrow-left" size={24} color="#ffffff" />
         </TouchableOpacity>
       </View>
 
@@ -200,7 +193,7 @@ const HomeScreen = ({ navigation }) => {
           data={posts}
           renderItem={renderPost}
           keyExtractor={item => item.id.toString()}
-          showsVerticalScrollIndicator={true} 
+          showsVerticalScrollIndicator={true}
         />
       )}
 

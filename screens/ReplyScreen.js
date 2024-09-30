@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, StyleSheet } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Não se esqueça de importar AsyncStorage
+import AsyncStorage from '@react-native-async-storage/async-storage'; 
 
 const ReplyScreen = ({ route, navigation }) => {
-  const { postId } = route.params; // Obtém o ID do post da rota
+  const { postId } = route.params; 
   const [message, setMessage] = useState('');
 
-  // Função para enviar a resposta
+  
   const sendReply = async (postId, message) => {
     const token = await AsyncStorage.getItem('userToken');
     if (!token) {
@@ -29,7 +29,7 @@ const ReplyScreen = ({ route, navigation }) => {
       if (response.status === 201) {
         const data = await response.json();
         console.log('Resposta enviada com sucesso:', data);
-        return data; // Retorna a nova resposta criada
+        return data; 
       } else {
         console.error('Erro ao enviar resposta:', response.status);
       }
@@ -40,9 +40,9 @@ const ReplyScreen = ({ route, navigation }) => {
 
   const handleSendReply = async () => {
     if (message.trim()) {
-      const newReply = await sendReply(postId, message); // Chama a função de enviar resposta
+      const newReply = await sendReply(postId, message); 
       if (newReply) {
-        navigation.goBack(); // Retorna para a tela anterior após enviar
+        navigation.goBack(); 
       }
     }
   };
