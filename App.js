@@ -18,6 +18,7 @@ import PerfilScreen from "./screens/PerfilScreen";
 import UserProfileScreen from "./screens/UserProfileScreen"
 import BuscaProfileScreen from "./screens/BuscaProfileScreen"
 import UserPerfilScreen from "./screens/UserPerfilScreen"
+import ReplyScreen from "./screens/ReplyScreen"
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -113,6 +114,11 @@ export default function App() {
           options={{ headerShown: false }}
           name="UserPerfil"
           component={UserPerfilScreen}
+        />
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="ReplyScreen"
+          component={ReplyScreen}
         />
       </Stack.Navigator>
     </NavigationContainer>
