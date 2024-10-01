@@ -33,7 +33,6 @@ const HomeScreen = ({ navigation }) => {
 
       console.log('Status da resposta:', response.status);
       const data = await response.json();
-      console.log('Dados da API:', data);
 
       if (Array.isArray(data)) {
         setPosts(data);
@@ -141,12 +140,30 @@ const HomeScreen = ({ navigation }) => {
       console.error('Erro ao curtir/descurtir o post:', error);
     }
   };
+  
+  const handleUserPress = (login) => {
+    setLoading(true); 
+    setTimeout(() => {
+      setLoading(false); 
+      navigation.navigate('UserProfile', { login }); 
+    }, 1000); 
+  };
+
+
+  const handleCommentPress = (postId) => {
+    navigation.navigate('ReplyScreen', { postId }); // Navega para a tela de resposta
+  };
 
   const renderPost = ({ item }) => (
     <View style={styles.postContainer}>
       <TouchableOpacity onPress={() => handleUserPress(item.user_login)}>
-        <Text style={styles.userName}>{item.user_login}</Text>
+        <Text style={styles.userName}>@{item.user_login}</Text>
         <Text style={styles.postText}>{item.message}</Text>
+        <Text style={styles.postData}>
+          {item.created_at.split('T')[0]}
+        </Text>
+
+        
       </TouchableOpacity>
 
       <View style={styles.iconContainer}>
@@ -199,7 +216,7 @@ const HomeScreen = ({ navigation }) => {
 
       <TouchableOpacity
         style={styles.floatingButton}
-        onPress={() => navigation.navigate('Postagens', { addPost })}
+        onPress={() => navigation.navigate('Postagens')}
       >
         <FontAwesome name="plus" size={24} color="#ffffff"/>
       </TouchableOpacity>
@@ -244,6 +261,12 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     marginTop: 5,
   },
+  postData: {
+    color: '#A9A9A9',
+    marginTop: 30,
+    marginBottom: -20,
+    fontSize: 10,
+  },
   floatingButton: {
     position: 'absolute',
     bottom: 30,
@@ -263,7 +286,7 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     flexDirection: 'row',
-    marginTop: 20,
+    marginTop: 2,
     marginLeft: '70%',
   },
   icon: {
