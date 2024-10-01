@@ -84,7 +84,7 @@ const SettingsScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.replace('Home')}>
+        <TouchableOpacity onPress={() => navigation.replace('Home')} style={styles.headerBack}>
           <FontAwesome name="arrow-left" size={24} color="#ffffff" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Perfil</Text>
@@ -154,6 +154,12 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 24,
+    marginRight: 30,
+    color: '#ffffff',
+  },
+  headerBack: {
+    fontSize: 24,
+    marginLeft: 30,
     color: '#ffffff',
   },
   userInfo: {

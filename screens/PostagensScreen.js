@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
@@ -56,25 +56,31 @@ const PostScreen = ({ navigation, route }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <FontAwesome name="arrow-left" size={24} color="#ffffff" />
+    <KeyboardAvoidingView 
+      style={styles.container} 
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0} // Ajuste conforme necessário
+    >
+      <ScrollView contentContainerStyle={styles.scrollView}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <FontAwesome name="arrow-left" size={24} color="#ffffff" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Novo Post</Text>
+        </View>
+        <TextInput
+          style={styles.input}
+          placeholder="O que você está pensando?"
+          placeholderTextColor="#aaaaaa"
+          multiline
+          value={postContent}
+          onChangeText={setPostContent}
+        />
+        <TouchableOpacity style={styles.button} onPress={handlePost}>
+          <Text style={styles.buttonText}>Postar</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Novo Post</Text>
-      </View>
-      <TextInput
-        style={styles.input}
-        placeholder="O que você está pensando?"
-        placeholderTextColor="#aaaaaa"
-        multiline
-        value={postContent}
-        onChangeText={setPostContent}
-      />
-      <TouchableOpacity style={styles.button} onPress={handlePost}>
-        <Text style={styles.buttonText}>Postar</Text>
-      </TouchableOpacity>
-    </SafeAreaView>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -82,6 +88,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#121212',
+  },
+  scrollView: {
     padding: 20,
   },
   header: {
@@ -104,7 +112,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#1E1E1E',
     color: '#ffffff',
     fontSize: 16,
-    padding: 10,
+    padding: '5%',
+    paddingBottom: '20%',
     borderRadius: 5,
     marginTop: 20,
     textAlignVertical: 'top',
