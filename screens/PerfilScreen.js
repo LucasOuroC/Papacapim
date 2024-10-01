@@ -126,6 +126,7 @@ const ProfileSettingsScreen = () => {
         <TextInput
           style={styles.input}
           placeholder="Login"
+          placeholderTextColor={'#BBBBBB'}
           value={login}
           onChangeText={setLogin}
           autoCapitalize="words"
@@ -133,6 +134,7 @@ const ProfileSettingsScreen = () => {
         <TextInput
           style={styles.input}
           placeholder="Nome"
+          placeholderTextColor={'#BBBBBB'}
           value={nome}
           onChangeText={setNome}
           autoCapitalize="none"
@@ -140,6 +142,7 @@ const ProfileSettingsScreen = () => {
         <TextInput
           style={styles.input}
           placeholder="Senha"
+          placeholderTextColor={'#BBBBBB'}
           value={password}
           onChangeText={setPassword}
           secureTextEntry
@@ -147,6 +150,7 @@ const ProfileSettingsScreen = () => {
         <TextInput
           style={styles.input}
           placeholder="Confirme a Senha"
+          placeholderTextColor={'#BBBBBB'}
           value={confirmPassword}
           onChangeText={setConfirmPassword}
           secureTextEntry
@@ -206,12 +210,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 20,
     marginTop: -50,
+    color: '#AAA',
   },
   input: {
     backgroundColor: '#1E1E1E',
     borderRadius: 5,
     padding: 10,
     marginBottom: 15,
+    color: '#fff',
   },
   saveButton: {
     backgroundColor: '#1DA1F2',
