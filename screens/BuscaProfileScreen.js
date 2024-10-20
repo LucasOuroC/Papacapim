@@ -22,6 +22,7 @@ const SearchUserScreen = ({ navigation }) => {
         return;
       }
 
+      
       const response = await fetch(`https://api.papacapim.just.pro.br/users/${userLogin}`, {
         method: 'GET',
         headers: {
